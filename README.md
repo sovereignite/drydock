@@ -14,7 +14,7 @@ as a gRPC service (Bootstrap.GetStatus / Bootstrap.StartBootstrap) over a
 loopback listener.
 
 The only non-stdlib dependency is the sibling
-[`github.com/sovereignite/api`](https://github.com/sovereignite/api) module
+[`github.com/sovereignite/signal`](https://github.com/sovereignite/signal) module
 (the shared protobuf/gRPC contract), resolved via a local `replace` directive
 until it is published.
 

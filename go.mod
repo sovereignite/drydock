@@ -1,9 +1,9 @@
-module github.com/sovereignite/bootstrap
+module github.com/sovereignite/drydock
 
 go 1.26.5
 
 require (
-	github.com/sovereignite/api v0.0.0
+	github.com/sovereignite/signal v0.0.0
 	google.golang.org/grpc v1.83.0
 	google.golang.org/protobuf v1.36.12
 )
@@ -15,4 +15,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 )
 
-replace github.com/sovereignite/api => ../api
+replace github.com/sovereignite/signal => ../signal

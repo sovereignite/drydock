@@ -8,7 +8,7 @@ import (
 	"context"
 	"errors"
 
-	pb "github.com/sovereignite/api/v1"
+	pb "github.com/sovereignite/signal/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"

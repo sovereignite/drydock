@@ -17,7 +17,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	bootstrap "github.com/sovereignite/bootstrap"
+	bootstrap "github.com/sovereignite/drydock"
 	"google.golang.org/grpc"
 )
 
