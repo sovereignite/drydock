@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2026 Sovereignite contributors
 
-package bootstrap
+package drydock
 
 import "context"
 
@@ -25,7 +25,7 @@ type CARequest struct {
 	IssuerHierarchy Artifact
 }
 
-// CASigner is the narrow Key Manager boundary used by bootstrap. EnsureSigning
+// CASigner is the narrow Key Manager boundary used by drydock. EnsureSigning
 // must create or reopen the same TPM-backed CA result for an idempotency key;
 // it must not allocate, rotate, export, or replace a key on retry.
 type CASigner interface {

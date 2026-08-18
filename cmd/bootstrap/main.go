@@ -17,7 +17,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	bootstrap "github.com/sovereignite/drydock"
+	"github.com/sovereignite/drydock"
 	"google.golang.org/grpc"
 )
 
@@ -47,7 +47,7 @@ func run(ctx context.Context, args []string) error {
 		return fmt.Errorf("create bootstrap coordinator: %w", err)
 	}
 
-	server, err := bootstrap.NewServer(coordinator)
+	server, err := drydock.NewServer(coordinator)
 	if err != nil {
 		return fmt.Errorf("create bootstrap server: %w", err)
 	}
@@ -76,10 +76,10 @@ func run(ctx context.Context, args []string) error {
 	}
 }
 
-func newStubCoordinator() (*bootstrap.Coordinator, error) {
+func newStubCoordinator() (*drydock.Coordinator, error) {
 	config := stubConfiguration()
 	store := &memoryJournalStore{}
-	deps := bootstrap.Dependencies{
+	deps := drydock.Dependencies{
 		CA:         &stubCASigner{},
 		Kubernetes: &stubKubernetesInstaller{},
 		Calico:     &stubCalicoInstaller{},
@@ -88,7 +88,7 @@ func newStubCoordinator() (*bootstrap.Coordinator, error) {
 		Dex:        &stubDexInstaller{},
 		Prepared:   &stubPreparedPublisher{},
 	}
-	return bootstrap.NewCoordinator(config, store, deps)
+	return drydock.NewCoordinator(config, store, deps)
 }
 
 var errStubDependencyUnavailable = errors.New(
@@ -96,16 +96,16 @@ var errStubDependencyUnavailable = errors.New(
 )
 
 type memoryJournalStore struct {
-	journal bootstrap.Journal
+	journal drydock.Journal
 }
 
-func (m *memoryJournalStore) Load() (bootstrap.Journal, error) {
+func (m *memoryJournalStore) Load() (drydock.Journal, error) {
 	return m.journal, nil
 }
 
 func (m *memoryJournalStore) Save(
 	_ uint64,
-	journal bootstrap.Journal,
+	journal drydock.Journal,
 ) error {
 	m.journal = journal
 	return nil
@@ -115,17 +115,17 @@ type stubCASigner struct{}
 
 func (stubCASigner) EnsureSigning(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.CARequest,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.CARequest,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubCASigner) VerifySigning(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.CARequest,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.CARequest,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
@@ -134,87 +134,87 @@ type stubKubernetesInstaller struct{}
 
 func (stubKubernetesInstaller) PrepareKubelet(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) VerifyKubelet(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) InitializeAPIServer(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) VerifyAPIServer(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) WaitControlPlane(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) VerifyControlPlane(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) Reconcile(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) VerifyReconciled(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) CheckReady(
 	context.Context,
-	bootstrap.Operation,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubKubernetesInstaller) VerifyReady(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
@@ -223,51 +223,51 @@ type stubCalicoInstaller struct{}
 
 func (stubCalicoInstaller) PrepareIPv6(
 	context.Context,
-	bootstrap.Operation,
+	drydock.Operation,
 	netip.Prefix,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubCalicoInstaller) VerifyIPv6(
 	context.Context,
-	bootstrap.Operation,
+	drydock.Operation,
 	netip.Prefix,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubCalicoInstaller) Reconcile(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubCalicoInstaller) VerifyReconciled(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubCalicoInstaller) CheckReady(
 	context.Context,
-	bootstrap.Operation,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubCalicoInstaller) VerifyReady(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
@@ -276,51 +276,51 @@ type stubIstioInstaller struct{}
 
 func (stubIstioInstaller) PrepareIngress(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubIstioInstaller) VerifyIngress(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubIstioInstaller) Reconcile(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubIstioInstaller) VerifyReconciled(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubIstioInstaller) CheckReady(
 	context.Context,
-	bootstrap.Operation,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubIstioInstaller) VerifyReady(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
@@ -329,49 +329,49 @@ type stubSPIREInstaller struct{}
 
 func (stubSPIREInstaller) PrepareTPM(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.SPIRERequest,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.SPIRERequest,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubSPIREInstaller) VerifyTPM(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.SPIRERequest,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.SPIRERequest,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubSPIREInstaller) Reconcile(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.Artifact,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubSPIREInstaller) VerifyReconciled(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Artifact,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Artifact,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubSPIREInstaller) CheckReady(
 	context.Context,
-	bootstrap.Operation,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubSPIREInstaller) VerifyReady(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
@@ -380,32 +380,32 @@ type stubDexInstaller struct{}
 
 func (stubDexInstaller) Reconcile(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.DexRequest,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+	drydock.DexRequest,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubDexInstaller) VerifyReconciled(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.DexRequest,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.DexRequest,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
 
 func (stubDexInstaller) CheckReady(
 	context.Context,
-	bootstrap.Operation,
-) (bootstrap.Observation, error) {
-	return bootstrap.Observation{}, errStubDependencyUnavailable
+	drydock.Operation,
+) (drydock.Observation, error) {
+	return drydock.Observation{}, errStubDependencyUnavailable
 }
 
 func (stubDexInstaller) VerifyReady(
 	context.Context,
-	bootstrap.Operation,
-	bootstrap.Observation,
+	drydock.Operation,
+	drydock.Observation,
 ) error {
 	return errStubDependencyUnavailable
 }
@@ -420,9 +420,9 @@ func (stubPreparedPublisher) Verify(context.Context) error {
 	return errStubDependencyUnavailable
 }
 
-func stubArtifact(name, version, content string) bootstrap.Artifact {
+func stubArtifact(name, version, content string) drydock.Artifact {
 	sum := sha256.Sum256([]byte(content))
-	return bootstrap.Artifact{
+	return drydock.Artifact{
 		Name:    name,
 		Version: version,
 		SHA256:  hex.EncodeToString(sum[:]),
@@ -430,11 +430,11 @@ func stubArtifact(name, version, content string) bootstrap.Artifact {
 	}
 }
 
-func stubConfiguration() bootstrap.Configuration {
+func stubConfiguration() drydock.Configuration {
 	const tpmReference = "tpm-device-key:0x81010040"
-	return bootstrap.Configuration{
+	return drydock.Configuration{
 		BootstrapVersion: "bootstrap-v5.0.0",
-		Versions: bootstrap.PinnedVersions{
+		Versions: drydock.PinnedVersions{
 			Kubernetes: "v1.35.1",
 			Calico:     "v3.31.2",
 			Istio:      "v1.29.3",
@@ -443,71 +443,71 @@ func stubConfiguration() bootstrap.Configuration {
 		},
 		ULA:                   netip.MustParsePrefix("fd18:4f1c:14d::/48"),
 		TPMDeviceKeyReference: tpmReference,
-		Artifacts: bootstrap.Artifacts{
+		Artifacts: drydock.Artifacts{
 			CARequest: stubArtifact(
-				bootstrap.ArtifactCARequest,
+				drydock.ArtifactCARequest,
 				"bootstrap-v5.0.0",
 				"public certificate request",
 			),
 			Kubelet: stubArtifact(
-				bootstrap.ArtifactKubelet,
+				drydock.ArtifactKubelet,
 				"v1.35.1",
 				"apiVersion: kubelet.config.k8s.io/v1beta1\n",
 			),
 			Calico: stubArtifact(
-				bootstrap.ArtifactCalico,
+				drydock.ArtifactCalico,
 				"v3.31.2",
 				"calico IPv6 desired configuration\n",
 			),
 			Istio: stubArtifact(
-				bootstrap.ArtifactIstio,
+				drydock.ArtifactIstio,
 				"v1.29.3",
 				"istio ingress desired configuration\n",
 			),
 			SPIRE: stubArtifact(
-				bootstrap.ArtifactSPIRE,
+				drydock.ArtifactSPIRE,
 				"v1.14.1",
 				"plugin = tpm_devid\nreference = "+tpmReference+"\n",
 			),
 			Dex: stubArtifact(
-				bootstrap.ArtifactDex,
+				drydock.ArtifactDex,
 				"v2.45.1",
 				"dex desired configuration\n",
 			),
 			ControlPlane: stubArtifact(
-				bootstrap.ArtifactControlPlane,
+				drydock.ArtifactControlPlane,
 				"v1.35.1",
 				"complete authorized control plane inputs\n",
 			),
 			Cluster: stubArtifact(
-				bootstrap.ArtifactCluster,
+				drydock.ArtifactCluster,
 				"v1.35.1",
 				"kubernetes cluster desired configuration\n",
 			),
 		},
-		Authority: bootstrap.AuthorityContracts{
+		Authority: drydock.AuthorityContracts{
 			KubernetesTopology: stubArtifact(
-				bootstrap.ArtifactTopologyContract,
+				drydock.ArtifactTopologyContract,
 				"decision-006-r1",
 				"complete topology and component inventory\n",
 			),
 			TPMKeyInventory: stubArtifact(
-				bootstrap.ArtifactKeyInventory,
+				drydock.ArtifactKeyInventory,
 				"decision-001-014-r1",
 				"authorized TPM role inventory and policy\n",
 			),
 			IssuerHierarchy: stubArtifact(
-				bootstrap.ArtifactIssuerHierarchy,
+				drydock.ArtifactIssuerHierarchy,
 				"decision-004-r1",
 				"authorized issuer hierarchy\n",
 			),
 			IngressTokenFlow: stubArtifact(
-				bootstrap.ArtifactIngressTokenFlow,
+				drydock.ArtifactIngressTokenFlow,
 				"decision-007-r1",
 				"authorized ingress and token flow\n",
 			),
 			Compatibility: stubArtifact(
-				bootstrap.ArtifactCompatibility,
+				drydock.ArtifactCompatibility,
 				"compatibility-r1",
 				"pinned upstream compatibility matrix\n",
 			),
