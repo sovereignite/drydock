@@ -1,0 +1,8 @@
+builds:
+  - id: bootstrap
+    dir: .
+    main: ./cmd/bootstrap
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
