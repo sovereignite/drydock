@@ -2,8 +2,8 @@
 
 [Unit]
 Description=Sovereignite Kubernetes bootstrap service
-Requires=sovereignite-keymanager.service sovereignite-trust.service
-After=sovereignite-keymanager.service sovereignite-trust.service containerd.service
+Requires=sovereignite-armory.service sovereignite-admiralty.service
+After=sovereignite-armory.service sovereignite-admiralty.service containerd.service
 Wants=containerd.service
 
 [Service]
@@ -14,8 +14,8 @@ UMask=0077
 RuntimeDirectory=sovereignite/bootstrap
 RuntimeDirectoryMode=0700
 RuntimeDirectoryPreserve=no
-ExecStartPre=/usr/bin/test -x /usr/bin/sovereignite-bootstrap
-ExecStart=/usr/bin/sovereignite-bootstrap
+ExecStartPre=/usr/bin/test -x /usr/bin/sovereignite-drydock
+ExecStart=/usr/bin/sovereignite-drydock
 ExecStartPost=/opt/sovereignite/bin/sovereignite-wait-ready bootstrap-prepared /run/sovereignite/bootstrap/prepared.json 120
 TimeoutStartSec=135s
 Restart=on-failure

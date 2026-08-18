@@ -30,7 +30,7 @@ go test ./...
 - `kubernetes/sovereignite.io/bootstrap/` — kustomize manifests (DaemonSet,
   namespace, service account).
 - `.ko.yaml` — ko build entry (`main: ./cmd/bootstrap`, static, `CGO_ENABLED=0`).
-- `os/systemd/sovereignite-bootstrap.service` — systemd unit.
+- `os/systemd/sovereignite-drydock.service` — systemd unit.
 
 ## License
 
